@@ -16,7 +16,7 @@ use Illuminate\Http\JsonResponse;
  *     description="Авторизация и регистрация"
  * )
  * @OA\Server(
- *      url="http://5.35.83.190",
+ *      url="http://31.128.46.70",
  *      description="Debug test server"
  * )
  */
