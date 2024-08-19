@@ -1,0 +1,35 @@
+version: '1'
+
+services:
+  nginx:
+    image: nginx:latest
+    ports:
+      - "80:80"
+    volumes:
+      - ./docker/nginx/conf.d:/etc/nginx/conf.d
+      - ./:/var/www/html
+      - ./docker/nginx/logs/nginx:/var/log/nginx
+      - ./docker/socket:/socket
+    container_name: kapusta_nginx
+    depends_on:
+      - app
+  app:
+    build:
+      context: ./docker/app
+      dockerfile: Dockerfile
+    volumes:
+      - ./:/var/www/html
+      - ./docker/socket:/socket
+    container_name: kapusta_app
+    depends_on:
+      - db
+  db:
+    image: mysql:latest
+    restart: always
+    environment:
+      MYSQL_DATABASE: kapusta
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "3306:3306"
+    command: mysqld --character-set-server=utf8 --collation-server=utf8_unicode_ci
+    container_name: kapusta_db

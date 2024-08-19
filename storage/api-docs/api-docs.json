@@ -1,0 +1,237 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Kapusta api",
+        "description": "Documentation Kapusta API",
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "http://5.35.83.190",
+            "description": "Debug test server"
+        }
+    ],
+    "paths": {
+        "/api/v1/register": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Получить детальные данные для страницы essence",
+                "operationId": "6796c44e1f6079c411abbfed066c5907",
+                "parameters": [
+                    {
+                        "name": "email",
+                        "in": "query",
+                        "description": "Email",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "test@mail.ru"
+                    },
+                    {
+                        "name": "name",
+                        "in": "query",
+                        "description": "Имя",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "Александр Александров"
+                    },
+                    {
+                        "name": "password",
+                        "in": "query",
+                        "description": "Пароль",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "123qweasd"
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Пользователь зарегистрирован, а код отправлен ему на почту",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "userId": {
+                                            "type": "integer",
+                                            "example": 1
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Ошибка регистрации",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Произошла ошибка"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "auth_api": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/check-code": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Проверить код регистрации",
+                "operationId": "05ff8b650c30642d6b4e13cfb2da9cc8",
+                "parameters": [
+                    {
+                        "name": "code",
+                        "in": "query",
+                        "description": "Код",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "55555"
+                    },
+                    {
+                        "name": "userId",
+                        "in": "query",
+                        "description": "ID пользователя полученный после регистрации",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "example": "1"
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Код верный"
+                    },
+                    "400": {
+                        "description": "Неверный код"
+                    }
+                },
+                "security": [
+                    {
+                        "auth_api": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/login": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Авторизация",
+                "operationId": "da2ca4d7a5cdec77b8b45a20373535cb",
+                "parameters": [
+                    {
+                        "name": "email",
+                        "in": "query",
+                        "description": "Email",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "test@mail.ru"
+                    },
+                    {
+                        "name": "password",
+                        "in": "query",
+                        "description": "Пароль",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "123qweasd"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Успешно",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "token": {
+                                            "description": "Токен авторизации",
+                                            "type": "string",
+                                            "example": "AscaksSADkaskdSQWe"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Неверный логин или пароль",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Неверный логин или пароль"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "auth_api": []
+                    }
+                ]
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "User": {
+                "description": "Информация о пользователе",
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "format": "string",
+                        "example": "Александров Александр"
+                    },
+                    "email": {
+                        "type": "string",
+                        "format": "string",
+                        "example": "test@mail.ru"
+                    }
+                },
+                "type": "object"
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Auth",
+            "description": "Авторизация и регистрация"
+        }
+    ]
+}
