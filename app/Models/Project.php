@@ -11,6 +11,7 @@ use Illuminate\Support\Collection;
  * @property Expense[]|Collection $expenses
  * @property float $budget
  * @property float $spent
+ * @property string $name
  */
 class Project extends Model
 {
