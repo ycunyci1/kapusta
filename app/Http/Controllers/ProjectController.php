@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\DTO\CategoryDTO;
 use App\DTO\LimitDTO;
 use App\DTO\ProjectDTO;
+use App\DTO\ProjectListDTO;
 use App\Models\Project;
 use Illuminate\Http\Request;
 
@@ -16,7 +18,7 @@ class ProjectController extends Controller
     {
         $user = auth()->user();
         $projects = $user->projects;
-        return ProjectDTO::collect($projects);
+        return ProjectListDTO::collect($projects);
     }
 
     /**
@@ -24,7 +26,7 @@ class ProjectController extends Controller
      */
     public function store(Request $request)
     {
-        //
+
     }
 
     /**
@@ -43,6 +45,9 @@ class ProjectController extends Controller
             limits: new LimitDTO(
                 spent: $totalExpenses,
                 limit: $project->budget
+            ),
+            categories: CategoryDTO::collect(
+                $project->categories
             )
         );
     }

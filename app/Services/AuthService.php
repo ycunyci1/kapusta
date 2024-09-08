@@ -23,9 +23,9 @@ class AuthService
         return $user->id;
     }
 
-    public function checkCode(array $data): void
+    public function checkCode(array $data): bool
     {
-        return $code ===
+        return true;
     }
 
     private static function codeGenerate(): int
