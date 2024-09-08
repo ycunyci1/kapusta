@@ -16,7 +16,7 @@ return new class extends Migration
             $table->float('price');
             $table->date('date');
             $table->text('comment')->nullable();
-            $table->foreignId('project_id')->constrained();
+            $table->foreignId('project_id')->nullable()->constrained();
             $table->foreignId('category_id')->constrained();
             $table->foreignId('account_id')->constrained('expense_accounts')->references('id');
             $table->timestamps();

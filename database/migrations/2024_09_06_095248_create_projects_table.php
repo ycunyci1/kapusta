@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('name');
             $table->float('budget');
             $table->foreignId('user_id')->constrained();
+            $table->foreignId('expenses_id')->constrained()->onDelete('cascade');
             $table->timestamps();
         });
     }

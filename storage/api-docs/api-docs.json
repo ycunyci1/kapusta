@@ -210,6 +210,66 @@
     },
     "components": {
         "schemas": {
+            "ExpenceRequest": {
+                "description": "Данные для затрат",
+                "properties": {
+                    "price": {
+                        "type": "number",
+                        "format": "float",
+                        "example": "500.00"
+                    },
+                    "date": {
+                        "type": "string",
+                        "format": "string",
+                        "example": "1000.00"
+                    },
+                    "comment": {
+                        "type": "string",
+                        "format": "string",
+                        "example": "50"
+                    },
+                    "projectId": {
+                        "type": "integer",
+                        "format": "integer",
+                        "example": "50",
+                        "nullable": true
+                    },
+                    "categoryId": {
+                        "type": "integer",
+                        "format": "integer",
+                        "example": "50"
+                    },
+                    "accountId": {
+                        "type": "integer",
+                        "format": "integer",
+                        "example": "50"
+                    }
+                },
+                "type": "object"
+            },
+            "ProjectRequest": {
+                "description": "Данные для создания проекта",
+                "properties": {
+                    "budget": {
+                        "type": "number",
+                        "format": "float",
+                        "example": "1000.00"
+                    },
+                    "name": {
+                        "type": "string",
+                        "format": "string",
+                        "example": "Car"
+                    },
+                    "expenses": {
+                        "type": "array",
+                        "format": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/ExpenceRequest"
+                        }
+                    }
+                },
+                "type": "object"
+            },
             "Category": {
                 "description": "Информация о категории",
                 "properties": {

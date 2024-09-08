@@ -2,12 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\DTO\Requests\ProjectRequestDTO;
 use App\DTO\Resources\CategoryDTO;
 use App\DTO\Resources\LimitDTO;
 use App\DTO\Resources\ProjectDTO;
 use App\DTO\Resources\ProjectListDTO;
+use App\Models\Expense;
 use App\Models\Project;
 use Illuminate\Http\Request;
+use phpDocumentor\Reflection\Exception;
 
 class ProjectController extends Controller
 {
@@ -26,7 +29,24 @@ class ProjectController extends Controller
      */
     public function store(Request $request)
     {
+        try {
+            $projectDTO = ProjectRequestDTO::from($request->all());
+        } catch (Exception $e) {
+            return $this->responseValidationError($e->getMessage());
+        }
+        $project = Project::query()->create($projectDTO->toArray());
 
+        $expenses = $projectDTO->expenses
+            ->map(function ($expense) use ($project) {
+                $expense->projectId = $project->id;
+                return $expense;
+            });
+
+        foreach ($expenses as $expense) {
+            Expense::query()->create($expense->toArray());
+        }
+
+        return $this->responseJson($project, 201);
     }
 
     /**
@@ -55,16 +75,25 @@ class ProjectController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, int $projectId)
     {
-        //
+        $project = Project::query()->find($projectId);
+        try {
+            $projectDTO = ProjectRequestDTO::from($request->all());
+        } catch (Exception $e) {
+            return $this->responseValidationError($e->getMessage());
+        }
+        Project::query()->where('id', $projectId)->update($projectDTO->toArray());
+
+        return $this->responseJson($project, 200);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(int $projectId)
     {
-        //
+        Project::query()->where('id', $projectId)->delete();
+        return $this->responseJson([], 204);
     }
 }

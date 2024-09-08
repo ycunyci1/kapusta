@@ -10,71 +10,64 @@ use Spatie\LaravelData\DataCollection;
 
 /**
  * @OA\Schema(
- *     schema="ProjectDetail",
- *     description="Детальная информация проекта"
+ *     schema="ProjectRequest",
+ *     description="Данные для создания проекта"
  * )
  */
 class ProjectRequestDTO extends Data
 {
+
+    /**
+     * @var float
+     *
+     * @OA\Property (
+     *     format="float",
+     *     example="1000.00"
+     * )
+     */
+    public float $budget;
+
+    /**
+     * @var string
+     *
+     * @OA\Property (
+     *     format="string",
+     *     example="Car"
+     * )
+     */
+    public string $name;
+
+    /**
+     * @var array
+     * @OA\Property (
+     *     format="array",
+     *     @OA\Items(ref="#/components/schemas/ExpenceRequest")
+     * )
+     */
+    #[DataCollectionOf(ExpenseRequestDTO::class)]
+    public DataCollection $expenses;
+
+    /**
+     * @throws \Exception
+     */
     public function __construct(
-        /**
-         * @var float
-         *
-         * @OA\Property (
-         *     format="float",
-         *     example="1000.00"
-         * )
-         */
-        public float           $totalBalance,
-
-        /**
-         * @var string
-         *
-         * @OA\Property (
-         *     format="string",
-         *     example="Car"
-         * )
-         */
-        public string          $name,
-
-        /**
-         * @var float
-         *
-         * @OA\Property (
-         *     format="float",
-         *     example="60000.00"
-         * )
-         */
-
-        public float           $expenses,
-
-        /**
-         * @var LimitDTO
-         * @OA\Property(ref="#/components/schemas/ProjectLimits")
-         */
-        public LimitDTO        $limits,
-
-        /**
-         * @var array
-         * @OA\Property (
-         *     format="array",
-         *     @OA\Items(ref="#/components/schemas/Category")
-         * )
-         */
-        #[DataCollectionOf(CategoryDTO::class)]
-        public DataCollection  $categories,
-
-        /**
-         * @var array|null
-         * @OA\Property (
-         *     format="array",
-         *     @OA\Items(type = "string")
-         * )
-         */
-        public ?DataCollection $incomes = null,
-
+        ?float  $budget = null,
+        ?string $name = null,
+        ?array $expenses = null,
     )
     {
-
+        if (!$budget) {
+            throw new \Exception("Budget can't be null");
+        }
+        $this->budget = $budget;
+        if (!$name) {
+            throw new \Exception("Name can't be null");
+        }
+        $this->name = $name;
+        try {
+            $this->expenses = ExpenseRequestDTO::collect($expenses);
+        } catch (\Exception $e) {
+            throw new \Exception($e->getMessage());
+        }
     }
 }
