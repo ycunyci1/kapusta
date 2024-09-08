@@ -1,12 +1,10 @@
 <?php
 
-namespace App\DTO;
+namespace App\DTO\Resources;
 
 use App\Models\Project;
 use Illuminate\Support\Collection;
-use Spatie\LaravelData\Attributes\DataCollectionOf;
 use Spatie\LaravelData\Data;
-use Spatie\LaravelData\DataCollection;
 
 /**
  * @OA\Schema(

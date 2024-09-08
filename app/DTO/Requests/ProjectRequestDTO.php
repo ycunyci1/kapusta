@@ -1,7 +1,9 @@
 <?php
 
-namespace App\DTO;
+namespace App\DTO\Requests;
 
+use App\DTO\Resources\CategoryDTO;
+use App\DTO\Resources\LimitDTO;
 use Spatie\LaravelData\Attributes\DataCollectionOf;
 use Spatie\LaravelData\Data;
 use Spatie\LaravelData\DataCollection;
@@ -12,10 +14,8 @@ use Spatie\LaravelData\DataCollection;
  *     description="Детальная информация проекта"
  * )
  */
-class ProjectDTO extends Data
+class ProjectRequestDTO extends Data
 {
-
-
     public function __construct(
         /**
          * @var float

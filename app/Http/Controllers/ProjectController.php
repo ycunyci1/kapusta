@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\DTO\CategoryDTO;
-use App\DTO\LimitDTO;
-use App\DTO\ProjectDTO;
-use App\DTO\ProjectListDTO;
+use App\DTO\Resources\CategoryDTO;
+use App\DTO\Resources\LimitDTO;
+use App\DTO\Resources\ProjectDTO;
+use App\DTO\Resources\ProjectListDTO;
 use App\Models\Project;
 use Illuminate\Http\Request;
 
