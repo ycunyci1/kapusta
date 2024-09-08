@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\DTO\LimitDTO;
 use App\DTO\ProjectDTO;
 use App\Models\Project;
 use Illuminate\Http\Request;
@@ -31,15 +32,18 @@ class ProjectController extends Controller
      */
     public function show(int $projectId)
     {
-        $user = auth()->user();
         $project = Project::query()->find($projectId);
         $expenses = $project->expenses;
+
         $totalExpenses = array_sum($expenses->pluck('price')->toArray());
         return new ProjectDTO(
             totalBalance: $project->budget - $totalExpenses,
             name: $project->name,
             expenses: $totalExpenses,
-            limits:
+            limits: new LimitDTO(
+                spent: $totalExpenses,
+                limit: $project->budget
+            )
         );
     }
 
