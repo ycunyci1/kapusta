@@ -23,9 +23,9 @@ class AuthService
         return $user->id;
     }
 
-    public static function checkCode(array $data): bool
+    public function checkCode(array $data): void
     {
-        return $data['code'] === User::query()->find($data['userId'])->codes()->latest()->first()->code;
+        return $code ===
     }
 
     private static function codeGenerate(): int

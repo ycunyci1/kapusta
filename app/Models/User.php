@@ -51,4 +51,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(RegisterCode::class);
     }
+
+    public function projects(): HasMany
+    {
+        return $this->hasMany(Project::class);
+    }
 }
