@@ -9,6 +9,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Collection;
 
 /**
+ * @property string $name
+ * @property null|string $icon
  * @property Project $project
  * @property Expense[]|Collection $expenses
  */
