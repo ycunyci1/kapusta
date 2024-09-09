@@ -14,7 +14,7 @@ class UserSwitchController extends Controller
         BaseUser::first()->update(['user_id' => $user->id]);
         auth()->loginUsingId($user->id);
 
-        return $this->responseJson('Switched to random user');
+        return $this->responseJson("Switched to random user $user->name");
     }
 
     public function switchToNewUser()
@@ -23,6 +23,6 @@ class UserSwitchController extends Controller
         BaseUser::first()->update(['user_id' => $user->id]);
         auth()->loginUsingId($user->id);
 
-        return $this->responseJson('Switched to new user');
+        return $this->responseJson("Switched to new user $user->name");
     }
 }

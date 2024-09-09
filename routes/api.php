@@ -4,6 +4,7 @@ use App\Http\Controllers\AccountController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ExpenseController;
+use App\Http\Controllers\HistoryController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\UserSwitchController;
 use Illuminate\Http\Request;
@@ -19,6 +20,8 @@ Route::prefix('v1')->group(function () {
     Route::post('login', [AuthController::class, 'login']);
 //    Route::middleware('auth:api')->group(function () {
 
+    Route::get('projects/history', HistoryController::class);
+
     Route::get('projects/{projectId}/expenses', [ExpenseController::class, 'index']);
     Route::post('projects/{projectId}/expenses', [ExpenseController::class, 'store']);
     Route::resource('projects', ProjectController::class);
@@ -28,7 +31,6 @@ Route::prefix('v1')->group(function () {
     Route::get('categories', [CategoryController::class, 'index']);
     Route::get('accounts', [AccountController::class, 'index']);
 
-    Route::get('projects/history', [ExpenseController::class, 'index']);
 
     //свитч пользователя
     Route::get('/switch-random', [UserSwitchController::class, 'switchToRandomUser']);

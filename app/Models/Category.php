@@ -29,9 +29,4 @@ class Category extends Model
     {
         return $this->hasMany(Expense::class);
     }
-
-    public function project(): BelongsTo
-    {
-        return $this->belongsTo(Project::class);
-    }
 }

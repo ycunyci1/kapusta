@@ -26,7 +26,7 @@ class ProjectDTO extends Data
          *     example="1"
          * )
          */
-        public int    $id,
+        public int                      $id,
         /**
          * @var float
          *
@@ -35,7 +35,7 @@ class ProjectDTO extends Data
          *     example="1000.00"
          * )
          */
-        public float           $totalBalance,
+        public float                    $totalBalance,
 
         /**
          * @var string
@@ -45,24 +45,21 @@ class ProjectDTO extends Data
          *     example="Car"
          * )
          */
-        public string          $name,
+        public string                   $name,
 
         /**
-         * @var float
-         *
+         * @var array
          * @OA\Property (
-         *     format="float",
-         *     example="60000.00"
+         *  ref="#/components/schemas/ProjectDetailExpenses"
          * )
          */
-
-        public float           $expenses,
+        public ProjectDetailExpensesDTO $expenses,
 
         /**
          * @var LimitDTO
          * @OA\Property(ref="#/components/schemas/ProjectLimits")
          */
-        public LimitDTO        $limits,
+        public LimitDTO                 $limits,
 
         /**
          * @var array
@@ -72,7 +69,7 @@ class ProjectDTO extends Data
          * )
          */
         #[DataCollectionOf(CategoryDTO::class)]
-        public iterable  $categories,
+        public iterable                 $categories,
 
         /**
          * @var array|null
@@ -81,7 +78,7 @@ class ProjectDTO extends Data
          *     @OA\Items(type = "string")
          * )
          */
-        public ?DataCollection $incomes = null,
+        public ?DataCollection          $incomes = null,
 
         /**
          * @var CurrencyUnit
@@ -92,11 +89,8 @@ class ProjectDTO extends Data
          *     enum={"$", "€", "£", "₽"}
          * )
          */
-        public CurrencyUnit $unit,
+        public CurrencyUnit             $unit = CurrencyUnit::USD,
     )
     {
-        if (!isset($this->unit)) {
-            $this->unit = CurrencyUnit::USD;
-        }
     }
 }

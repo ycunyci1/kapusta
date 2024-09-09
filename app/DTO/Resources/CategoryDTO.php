@@ -22,7 +22,7 @@ class CategoryDTO extends Data
      *     example="1"
      * )
      */
-    public int    $id;
+    public int $id;
 
     /**
      * @var string
@@ -74,15 +74,20 @@ class CategoryDTO extends Data
      */
     public int $personOfBudget;
 
+    public int $projectId;
+
     public ?iterable $expenses;
 
     public function __construct(
         string     $name,
         string     $icon,
         Collection $expenses,
+        int        $projectId
     )
     {
-        $project = Project::find($expenses->first()->project_id);
+        dd($projectId);
+
+        $project = Project::find($projectId);
         $this->name = $name;
         $this->totalExpenses = (float)$expenses->sum('price');
         $this->icon = $icon;

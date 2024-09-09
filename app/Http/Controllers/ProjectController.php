@@ -5,8 +5,11 @@ namespace App\Http\Controllers;
 use App\DTO\Requests\ProjectRequestDTO;
 use App\DTO\Resources\CategoryDTO;
 use App\DTO\Resources\LimitDTO;
+use App\DTO\Resources\ProjectDetailExpensesDetailDTO;
+use App\DTO\Resources\ProjectDetailExpensesDTO;
 use App\DTO\Resources\ProjectDTO;
 use App\DTO\Resources\ProjectListDTO;
+use App\Enums\PeriodEnum;
 use App\Models\Category;
 use App\Models\Expense;
 use App\Models\Project;
@@ -123,7 +126,7 @@ class ProjectController extends Controller
 
         //новые expenses
         if ($projectDTO->newExpenses) {
-            $expenses = array_map(function($expense) use ($project) {
+            $expenses = array_map(function ($expense) use ($project) {
                 $expense['project_id'] = $project->id;
                 $expense['category_id'] = $expense['categoryId'];
                 $expense['account_id'] = $expense['accountId'];
@@ -145,7 +148,10 @@ class ProjectController extends Controller
             id: $project->id,
             totalBalance: $project->budget - $totalExpenses,
             name: $project->name,
-            expenses: $totalExpenses,
+            expenses: new ProjectDetailExpensesDTO(
+                expenses: ProjectDetailExpensesDetailDTO::collect($expenses),
+                total: (float) array_sum($expenses->pluck('price')->toArray())
+            ),
             limits: new LimitDTO(
                 spent: $totalExpenses,
                 limit: $project->budget
@@ -197,22 +203,46 @@ class ProjectController extends Controller
      * @return ProjectDTO
      */
 
-    public function show(int $projectId)
+    public function show(int $projectId, Request $request)
     {
+
         $project = Project::query()->find($projectId);
         $expenses = $project->expenses;
+        $period = $request->get('period');
+        $expensesForGraph = collect();
+        if ($period) {
+            $expensesForGraph = match ($period) {
+                PeriodEnum::DAY->value => $expenses->where('date', now()->format('Y-m-d')),
+                PeriodEnum::WEEK->value => $expenses->whereBetween('date', [now()->startOfWeek(), now()->endOfWeek()]),
+                PeriodEnum::MONTH->value => $expenses->whereBetween('date', [now()->startOfMonth(), now()->endOfMonth()]),
+                PeriodEnum::YEAR->value => $expenses->whereBetween('date', [now()->startOfYear(), now()->endOfYear()]),
+            };
+        }
+
+        $projectCategories = Category::query()->whereHas('expenses', fn($expensesQuery) => $expensesQuery->whereIn('expenses.id', $expenses->pluck('id')
+            ->toArray()))->get()->load(['expenses' => fn($query) => $query->whereHas('projects', fn($projects) => $projects
+            ->where('projects.id', $projectId))]);
+        $projectCategories = $projectCategories->map(function ($projectCategory) use ($projectId) {
+            $projectCategory->projectId = $projectId;
+            return $projectCategory;
+        });
+        dd($projectCategories-);
+
         $totalExpenses = array_sum($expenses->pluck('price')->toArray());
         return new ProjectDTO(
             id: $projectId,
             totalBalance: $project->budget - $totalExpenses,
             name: $project->name,
-            expenses: $totalExpenses,
+            expenses: new ProjectDetailExpensesDTO(
+                expenses: ProjectDetailExpensesDetailDTO::collect($expensesForGraph),
+                total: (float) array_sum($expensesForGraph->pluck('price')->toArray())
+            ),
             limits: new LimitDTO(
                 spent: $totalExpenses,
                 limit: $project->budget
             ),
             categories: CategoryDTO::collect(
-                Category::query()->whereHas('expenses', fn($expense) => $expense->where('project_id', $project->id))->get()->load(['expenses' => fn($query) => $query->whereHas('project', fn($project) => $project->where('id', $projectId))->select('id', 'price', 'project_id')])
+                $projectCategories
             )
         );
     }
