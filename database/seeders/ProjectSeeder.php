@@ -30,14 +30,13 @@ class ProjectSeeder extends Seeder
                         'price' => (float) rand(10, 10000),
                         'date' => fake()->date,
                         'comment' => fake()->boolean ? fake()->text(50) : null,
-                        'project_id' => $project->id,
                         'category_id' => $category->id,
                         'account_id' => fake()->randomElement(ExpenseAccount::all()->pluck('id')),
                     ]);
                     $expenses[] = $expense->id;
                 }
                 /** @var Category $category */
-                $category->expenses()->attach($expenses);
+                $project->expenses()->attach($expenses);
             }
         }
     }

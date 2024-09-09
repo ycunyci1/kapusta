@@ -121,17 +121,24 @@ class ProjectController extends Controller
         }
         $project = Project::query()->create($projectData);
 
-        if ($projectDTO->expenses) {
+        //новые expenses
+        if ($projectDTO->newExpenses) {
             $expenses = array_map(function($expense) use ($project) {
                 $expense['project_id'] = $project->id;
                 $expense['category_id'] = $expense['categoryId'];
                 $expense['account_id'] = $expense['accountId'];
                 return $expense;
-            }, $projectDTO->expenses);
+            }, $projectDTO->newExpenses);
             foreach ($expenses as $expense) {
                 Expense::query()->create($expense);
             }
         }
+
+        //старые expenses
+        if ($projectDTO->oldExpenses) {
+            $project->expenses()->attach($projectDTO->oldExpenses);
+        }
+
         $expenses = $project->expenses;
         $totalExpenses = array_sum($expenses->pluck('price')->toArray());
         return $this->responseJson(new ProjectDTO(

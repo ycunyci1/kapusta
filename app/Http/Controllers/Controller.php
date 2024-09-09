@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\BaseUser;
 use Illuminate\Http\JsonResponse;
 
 /**
@@ -32,7 +33,8 @@ abstract class Controller
 {
     public function __construct()
     {
-        auth()->loginUsingId(1);
+        $baseUserId = BaseUser::first()->user_id ?? 1;
+        auth()->loginUsingId($baseUserId);
     }
 
     public function responseJson(mixed $data = [], ?int $code = 200): JsonResponse

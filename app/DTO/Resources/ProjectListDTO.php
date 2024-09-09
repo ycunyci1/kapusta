@@ -2,6 +2,7 @@
 
 namespace App\DTO\Resources;
 
+use App\Enums\CurrencyUnit;
 use Spatie\LaravelData\Data;
 
 /**
@@ -63,12 +64,24 @@ class ProjectListDTO extends Data
      */
     public int $percent;
 
+    /**
+     * @var CurrencyUnit
+     *
+     * @OA\Property (
+     *     format="string",
+     *     example="$",
+     *     enum={"$", "€", "£", "₽"}
+     * )
+     */
+    public CurrencyUnit $unit;
+
 
     public function __construct(
         int $id,
         string $name,
         float $spent,
         float $budget,
+        CurrencyUnit $unit = CurrencyUnit::USD,
     )
     {
         $this->id = $id;
@@ -76,5 +89,6 @@ class ProjectListDTO extends Data
         $this->spent = $spent;
         $this->budget = $budget;
         $this->percent = (int) round(($spent / $budget) * 100);
+        $this->unit = $unit;
     }
 }

@@ -9,9 +9,58 @@
         {
             "url": "http://31.128.46.70",
             "description": "Debug test server"
+        },
+        {
+            "url": "http://localhost",
+            "description": "Local backend server"
         }
     ],
     "paths": {
+        "/api/v1/accounts": {
+            "get": {
+                "tags": [
+                    "Accounts"
+                ],
+                "summary": "Получить список счетов",
+                "operationId": "d0843c66644ffb27960437c18bbec269",
+                "responses": {
+                    "200": {
+                        "description": "Список счетов",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/AccountList"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Неверный запрос",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Invalid request"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "auth_api": []
+                    }
+                ]
+            }
+        },
         "/api/v1/register": {
             "post": {
                 "tags": [
@@ -207,6 +256,454 @@
                     }
                 ]
             }
+        },
+        "/api/v1/projects/{projectId}/expenses": {
+            "get": {
+                "tags": [
+                    "Projects"
+                ],
+                "summary": "Получить затраты по проекту",
+                "operationId": "732a0e44e32a46de0a45e0d866ff12c2",
+                "parameters": [
+                    {
+                        "name": "projectId",
+                        "in": "path",
+                        "description": "Id проекта",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "126"
+                    },
+                    {
+                        "name": "categoryId",
+                        "in": "query",
+                        "description": "Id категории для фильтрации",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "example": "1"
+                    },
+                    {
+                        "name": "month",
+                        "in": "query",
+                        "description": "Месяц за который надо прислать затраты(в разработке)",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "example": "1"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Список затрат по проекту",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/ExpenseList"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Неверный код"
+                    }
+                },
+                "security": [
+                    {
+                        "auth_api": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Projects"
+                ],
+                "summary": "Добавить затрату в проект",
+                "operationId": "3ec99081290bd638c9e454d67bdcba7a",
+                "parameters": [
+                    {
+                        "name": "projectId",
+                        "in": "path",
+                        "description": "Id проекта",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "example": "126"
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ExpenceRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Затрата успешно добавлена",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "Status"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Неверные данные",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Invalid request data"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Проект не найден",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Project not found"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "auth_api": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Projects"
+                ],
+                "summary": "Добавить затрату в проект",
+                "operationId": "d4db6a74c9bcc005caad77505c4d0284",
+                "parameters": [
+                    {
+                        "name": "expenseId",
+                        "in": "path",
+                        "description": "Id затраты",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "example": "126"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Затрата успешно удалена",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "Status"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Неверные данные",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Invalid request data"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Проект не найден",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Project not found"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "auth_api": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/projects": {
+            "get": {
+                "tags": [
+                    "Projects"
+                ],
+                "summary": "Получить список проектов пользователя",
+                "operationId": "4581dcc89729ced0a5c29d8132aaaee0",
+                "responses": {
+                    "200": {
+                        "description": "Список проектов",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/ProjectList"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Пользователь не авторизован",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Unauthorized"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Неверный запрос",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Invalid request"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "auth_api": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Projects"
+                ],
+                "summary": "Создать новый проект",
+                "operationId": "7afee26aa9047c66217855bd05d3db0b",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ProjectRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Проект успешно создан",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ProjectDetail"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Ошибка валидации данных",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Validation error"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Ошибка сервера",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Internal server error"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "auth_api": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/projects/{projectId}": {
+            "get": {
+                "tags": [
+                    "Projects"
+                ],
+                "summary": "Получить информацию о проекте",
+                "operationId": "d15a8ad2c684adf95377877800f8e713",
+                "parameters": [
+                    {
+                        "name": "projectId",
+                        "in": "path",
+                        "description": "Id проекта",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Информация о проекте",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ProjectDetail"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Проект не найден",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Project not found"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "auth_api": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Projects"
+                ],
+                "summary": "Удалить проект",
+                "operationId": "44986be29c394e143d35e39f29cddec3",
+                "parameters": [
+                    {
+                        "name": "projectId",
+                        "in": "path",
+                        "description": "Id проекта",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Проект успешно удален"
+                    },
+                    "404": {
+                        "description": "Проект не найден",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Project not found"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "auth_api": []
+                    }
+                ]
+            }
         }
     },
     "components": {
@@ -222,12 +719,13 @@
                     "date": {
                         "type": "string",
                         "format": "string",
-                        "example": "1000.00"
+                        "example": "1999-01-01"
                     },
                     "comment": {
                         "type": "string",
                         "format": "string",
-                        "example": "50"
+                        "example": "50",
+                        "nullable": true
                     },
                     "projectId": {
                         "type": "integer",
@@ -261,12 +759,46 @@
                         "format": "string",
                         "example": "Car"
                     },
-                    "expenses": {
+                    "oldExpenses": {
+                        "type": "array",
+                        "items": {
+                            "type": "integer"
+                        },
+                        "example": "{1,2,3}"
+                    },
+                    "newExpenses": {
                         "type": "array",
                         "format": "array",
                         "items": {
                             "$ref": "#/components/schemas/ExpenceRequest"
-                        }
+                        },
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "AccountList": {
+                "description": "Список аккаунтов",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "format": "int",
+                        "example": "1"
+                    },
+                    "icon": {
+                        "type": "string",
+                        "format": "string",
+                        "example": "https://example.com/path/to/file"
+                    },
+                    "name": {
+                        "type": "string",
+                        "format": "string",
+                        "example": "Cash"
+                    },
+                    "slug": {
+                        "type": "string",
+                        "format": "string",
+                        "example": "cash"
                     }
                 },
                 "type": "object"
@@ -274,6 +806,11 @@
             "Category": {
                 "description": "Информация о категории",
                 "properties": {
+                    "id": {
+                        "type": "integer",
+                        "format": "int",
+                        "example": "1"
+                    },
                     "name": {
                         "type": "string",
                         "format": "string",
@@ -302,6 +839,74 @@
                 },
                 "type": "object"
             },
+            "CategoryList": {
+                "description": "Список проектов",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "format": "int",
+                        "example": "1"
+                    },
+                    "icon": {
+                        "type": "string",
+                        "format": "string",
+                        "example": "https://example.com/path/to/file"
+                    },
+                    "name": {
+                        "type": "string",
+                        "format": "string",
+                        "example": "Taxes"
+                    }
+                },
+                "type": "object"
+            },
+            "ExpenseList": {
+                "description": "Список затрат",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "format": "int",
+                        "example": "1"
+                    },
+                    "icon": {
+                        "type": "string",
+                        "format": "string",
+                        "example": "https://example.com/path/to/file"
+                    },
+                    "name": {
+                        "type": "string",
+                        "format": "string",
+                        "example": "Taxes"
+                    },
+                    "date": {
+                        "type": "string",
+                        "format": "string",
+                        "example": "1999-01-01"
+                    },
+                    "comment": {
+                        "type": "string",
+                        "format": "string",
+                        "example": "Comment",
+                        "nullable": true
+                    },
+                    "price": {
+                        "type": "number",
+                        "format": "float",
+                        "example": "1900.00"
+                    },
+                    "unit": {
+                        "format": "string",
+                        "enum": [
+                            "$",
+                            "€",
+                            "£",
+                            "₽"
+                        ],
+                        "example": "$"
+                    }
+                },
+                "type": "object"
+            },
             "ProjectLimits": {
                 "description": "Информация о лимитах",
                 "properties": {
@@ -319,6 +924,16 @@
                         "type": "integer",
                         "format": "integer",
                         "example": "50"
+                    },
+                    "unit": {
+                        "format": "string",
+                        "enum": [
+                            "$",
+                            "€",
+                            "£",
+                            "₽"
+                        ],
+                        "example": "$"
                     }
                 },
                 "type": "object"
@@ -326,6 +941,11 @@
             "ProjectDetail": {
                 "description": "Детальная информация проекта",
                 "properties": {
+                    "id": {
+                        "type": "integer",
+                        "format": "int",
+                        "example": "1"
+                    },
                     "totalBalance": {
                         "type": "number",
                         "format": "float",
@@ -358,6 +978,16 @@
                             "type": "string"
                         },
                         "nullable": true
+                    },
+                    "unit": {
+                        "format": "string",
+                        "enum": [
+                            "$",
+                            "€",
+                            "£",
+                            "₽"
+                        ],
+                        "example": "$"
                     }
                 },
                 "type": "object"
@@ -389,6 +1019,16 @@
                         "type": "integer",
                         "format": "int",
                         "example": "50"
+                    },
+                    "unit": {
+                        "format": "string",
+                        "enum": [
+                            "$",
+                            "€",
+                            "£",
+                            "₽"
+                        ],
+                        "example": "$"
                     }
                 },
                 "type": "object"
@@ -415,6 +1055,14 @@
         {
             "name": "Auth",
             "description": "Авторизация и регистрация"
+        },
+        {
+            "name": "Projects",
+            "description": "Проекты"
+        },
+        {
+            "name": "Accounts",
+            "description": "Accounts"
         }
     ]
 }

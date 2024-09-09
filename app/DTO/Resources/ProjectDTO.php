@@ -2,6 +2,7 @@
 
 namespace App\DTO\Resources;
 
+use App\Enums\CurrencyUnit;
 use Spatie\LaravelData\Attributes\DataCollectionOf;
 use Spatie\LaravelData\Data;
 use Spatie\LaravelData\DataCollection;
@@ -82,8 +83,20 @@ class ProjectDTO extends Data
          */
         public ?DataCollection $incomes = null,
 
+        /**
+         * @var CurrencyUnit
+         *
+         * @OA\Property (
+         *     format="string",
+         *     example="$",
+         *     enum={"$", "€", "£", "₽"}
+         * )
+         */
+        public CurrencyUnit $unit,
     )
     {
-
+        if (!isset($this->unit)) {
+            $this->unit = CurrencyUnit::USD;
+        }
     }
 }

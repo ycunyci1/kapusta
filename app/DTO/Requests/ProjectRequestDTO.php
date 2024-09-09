@@ -38,6 +38,17 @@ class ProjectRequestDTO extends Data
     public string $name;
 
     /**
+     * @var DataCollection|int[]|null
+     *
+     * @OA\Property (
+     *    type="array",
+     *      @OA\Items(type="integer"),
+     *     example="{1,2,3}"
+     * )
+     */
+    public ?DataCollection $oldExpenses;
+
+    /**
      * @var array|null
      * @OA\Property (
      *     format="array",
@@ -45,7 +56,7 @@ class ProjectRequestDTO extends Data
      * )
      */
     #[DataCollectionOf(ExpenseRequestDTO::class)]
-    public ?iterable $expenses;
+    public ?iterable $newExpenses;
 
     /**
      * @throws \Exception
@@ -53,7 +64,8 @@ class ProjectRequestDTO extends Data
     public function __construct(
         ?float  $budget = null,
         ?string $name = null,
-        ?array $expenses = null,
+        ?array $oldExpenses = null,
+        ?array $newExpenses = null,
     )
     {
         if (!$budget) {
@@ -64,12 +76,14 @@ class ProjectRequestDTO extends Data
             throw new \Exception("Name can't be null");
         }
         $this->name = $name;
-        if ($expenses) {
+
+        if ($oldExpenses) {
             try {
-                $this->expenses = ExpenseRequestDTO::collect($expenses);
+                $this->$newExpenses = ExpenseRequestDTO::collect($oldExpenses);
             } catch (\Exception $e) {
                 throw new \Exception($e->getMessage());
             }
         }
+        $this->newExpenses = $newExpenses;
     }
 }

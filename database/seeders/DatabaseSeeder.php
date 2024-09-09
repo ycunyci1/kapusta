@@ -19,5 +19,6 @@ class DatabaseSeeder extends Seeder
         $this->call(AccountSeeder::class);
         Category::factory(10)->create();
         $this->call(ProjectSeeder::class);
+        $this->call(BaseUserSeeder::class);
     }
 }

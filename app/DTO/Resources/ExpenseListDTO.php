@@ -2,6 +2,7 @@
 
 namespace App\DTO\Resources;
 
+use App\Enums\CurrencyUnit;
 use Spatie\LaravelData\Data;
 
 /**
@@ -72,7 +73,21 @@ class ExpenseListDTO extends Data
          * )
          */
         public float $price,
+
+        /**
+         * @var CurrencyUnit
+         *
+         * @OA\Property (
+         *     format="string",
+         *     example="$",
+         *     enum={"$", "€", "£", "₽"}
+         * )
+         */
+        public CurrencyUnit $unit,
     )
     {
+        if (!isset($this->unit)) {
+            $this->unit = CurrencyUnit::USD;
+        }
     }
 }

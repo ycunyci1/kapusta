@@ -2,6 +2,7 @@
 
 namespace App\DTO\Resources;
 
+use App\Enums\CurrencyUnit;
 use Spatie\LaravelData\Data;
 
 /**
@@ -41,13 +42,27 @@ class LimitDTO extends Data
      * )
      */
     public int $percent;
+
+    /**
+     * @var CurrencyUnit
+     *
+     * @OA\Property (
+     *     format="string",
+     *     example="$",
+     *     enum={"$", "€", "£", "₽"}
+     * )
+     */
+    public CurrencyUnit $unit;
+
     public function __construct(
         float $spent,
         float $limit,
+        CurrencyUnit $unit = CurrencyUnit::USD
     )
     {
         $this->spent = $spent;
         $this->limit = $limit;
         $this->percent = (int) round(($spent / $limit) * 100);
+        $this->unit = $unit;
     }
 }
