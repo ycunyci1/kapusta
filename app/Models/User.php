@@ -7,8 +7,12 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Collection;
 use Laravel\Passport\HasApiTokens;
 
+/**
+ * @property Project[]|Collection $projects
+ */
 class User extends Authenticatable
 {
     use HasFactory, Notifiable, HasApiTokens;
@@ -50,5 +54,10 @@ class User extends Authenticatable
     public function codes(): HasMany
     {
         return $this->hasMany(RegisterCode::class);
+    }
+
+    public function projects(): HasMany
+    {
+        return $this->hasMany(Project::class);
     }
 }

@@ -14,15 +14,19 @@ use Illuminate\Http\JsonResponse;
  * @OA\Tag(
  *     name="Auth",
  *     description="Авторизация и регистрация"
+ *     )
+ * @OA\Tag(
+ *     name="Projects",
+ *     description="Проекты"
  * )
  * @OA\Server(
- *      url="http://5.35.83.190",
+ *      url="http://31.128.46.70",
  *      description="Debug test server"
  * )
  */
 abstract class Controller
 {
-    public function responseJson(array $data, ?int $code = 200): JsonResponse
+    public function responseJson(mixed $data = [], ?int $code = 200): JsonResponse
     {
         return response()->json([
             'data' => $data,
