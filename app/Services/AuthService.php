@@ -10,22 +10,24 @@ use Illuminate\Support\Facades\Mail;
 
 class AuthService
 {
-    public static function register(array $data): int
+    public static function register(array $data): User
     {
         $data['password'] = Hash::make($data['password']);
-        $user = User::query()->create($data);
-        $code = self::codeGenerate();
-        RegisterCode::query()->create([
-            'code' => $code,
-            'user_id' => $user->id
-        ]);
-        Mail::to($user->email)->send(new SendCode($code));
-        return $user->id;
+        //        $code = self::codeGenerate();
+//        RegisterCode::query()->create([
+//            'code' => $code,
+//            'user_id' => $user->id
+//        ]);
+//        Mail::to($user->email)->send(new SendCode($code));
+        return User::query()->create($data);
     }
 
     public static function checkCode(array $data): bool
     {
-        return $data['code'] === User::query()->find($data['userId'])->codes()->latest()->first()->code;
+        $userCode = User::query()->where('email', $data['email'])->first()
+            ?->codes()->latest()->first()
+            ?->code;
+        return $data['code'] === $userCode;
     }
 
     private static function codeGenerate(): int

@@ -23,7 +23,7 @@ class CheckCodeRequest extends FormRequest
     {
         return [
             'code' => 'string|required|min:5',
-            'userId' => 'required|exists:users,id',
+            'email' => 'required|string|email',
         ];
     }
 }

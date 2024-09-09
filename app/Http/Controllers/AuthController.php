@@ -54,12 +54,14 @@ class AuthController extends Controller
      *          response=201,
      *          description="Пользователь зарегистрирован, а код отправлен ему на почту",
      *          @OA\JsonContent(
-     *              type="object",
-     *              @OA\Property(
-     *                  property="userId",
-     *                  type="integer",
-     *                  example=1
+     *          ),
+     *          @OA\Header(
+     *              header="X-Token",
+     *              @OA\Schema(
+     *                  type="string",
+     *                  example="token value"
      *              ),
+     *              description="Токен авторизации"
      *          )
      *     ),
      *     @OA\Response(
@@ -86,12 +88,12 @@ class AuthController extends Controller
     {
         $data = $request->validated();
         try {
-            $userId = AuthService::register($data);
+            $user = AuthService::register($data);
         } catch (Exception $exception) {
             Log::error('Ошибка при регистрации пользователя: ' . $exception->getMessage());
             return $this->errorResponse('Произошла ошибка при регистрации пользователя');
         }
-        return $this->responseJson(['userId' => $userId], 201);
+        return $this->responseJson([], 201)->withHeaders(['X-Token' => $user->createToken('AUTO_TOKEN')->accessToken]);
     }
 
     /**
@@ -111,13 +113,13 @@ class AuthController extends Controller
      *          ),
      *     ),
      *     @OA\Parameter(
-     *          name="userId",
-     *          description="ID пользователя полученный после регистрации",
+     *          name="email",
+     *          description="Email",
      *          in="query",
      *          required=true,
-     *          example="1",
+     *          example="test@example.ru",
      *          @OA\Schema(
-     *              type="integer",
+     *              type="string",
      *          ),
      *     ),
      *     @OA\Response(
@@ -175,14 +177,15 @@ class AuthController extends Controller
      *          response=200,
      *          description="Успешно",
      *          @OA\JsonContent(
-     *              type="object",
-     *              @OA\Property(
-     *                  property="token",
-     *                  description="Токен авторизации",
-     *                  type="string",
-     *                  example="AscaksSADkaskdSQWe"
-     *              ),
      *          ),
+     *          @OA\Header(
+     *              header="X-Token",
+     *              @OA\Schema(
+     *                  type="string",
+     *                  example="token value"
+     *              ),
+     *              description="Токен авторизации"
+     *          )
      *     ),
      *     @OA\Response(
      *          response=422,
@@ -209,9 +212,7 @@ class AuthController extends Controller
         $data = $request->validated();
         $user = User::query()->where('email', $data['email'])->first();
         if ($user && Hash::check($data['password'], $user->password)) {
-            return $this->responseJson([
-                'token' => $user->createToken('AUTO_TOKEN')->accessToken
-            ]);
+            return $this->responseJson([])->withHeaders(['X-Token' => $user->createToken('AUTO_TOKEN')->accessToken]);
         }
         return $this->responseValidationError('Неверный логин или пароль');
     }

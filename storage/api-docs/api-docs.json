@@ -54,17 +54,18 @@
                 "responses": {
                     "201": {
                         "description": "Пользователь зарегистрирован, а код отправлен ему на почту",
+                        "headers": {
+                            "X-Token": {
+                                "description": "Токен авторизации",
+                                "schema": {
+                                    "type": "string",
+                                    "example": "token value"
+                                }
+                            }
+                        },
                         "content": {
                             "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "userId": {
-                                            "type": "integer",
-                                            "example": 1
-                                        }
-                                    },
-                                    "type": "object"
-                                }
+                                "schema": {}
                             }
                         }
                     },
@@ -111,14 +112,14 @@
                         "example": "55555"
                     },
                     {
-                        "name": "userId",
+                        "name": "email",
                         "in": "query",
-                        "description": "ID пользователя полученный после регистрации",
+                        "description": "Email",
                         "required": true,
                         "schema": {
-                            "type": "integer"
+                            "type": "string"
                         },
-                        "example": "1"
+                        "example": "test@example.ru"
                     }
                 ],
                 "responses": {
@@ -168,18 +169,18 @@
                 "responses": {
                     "200": {
                         "description": "Успешно",
+                        "headers": {
+                            "X-Token": {
+                                "description": "Токен авторизации",
+                                "schema": {
+                                    "type": "string",
+                                    "example": "token value"
+                                }
+                            }
+                        },
                         "content": {
                             "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "token": {
-                                            "description": "Токен авторизации",
-                                            "type": "string",
-                                            "example": "AscaksSADkaskdSQWe"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
+                                "schema": {}
                             }
                         }
                     },
