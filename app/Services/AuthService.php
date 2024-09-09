@@ -24,14 +24,10 @@ class AuthService
 
     public function checkCode(array $data): bool
     {
-<<<<<<< HEAD
         $userCode = User::query()->where('email', $data['email'])->first()
             ?->codes()->latest()->first()
             ?->code;
         return $data['code'] === $userCode;
-=======
-        return true;
->>>>>>> dceaf3ff56958bf50fa8d393aaba48e59073db5a
     }
 
     private static function codeGenerate(): int
