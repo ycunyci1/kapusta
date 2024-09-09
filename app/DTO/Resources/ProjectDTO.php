@@ -18,6 +18,15 @@ class ProjectDTO extends Data
 
     public function __construct(
         /**
+         * @var int
+         *
+         * @OA\Property (
+         *     format="int",
+         *     example="1"
+         * )
+         */
+        public int    $id,
+        /**
          * @var float
          *
          * @OA\Property (
@@ -62,7 +71,7 @@ class ProjectDTO extends Data
          * )
          */
         #[DataCollectionOf(CategoryDTO::class)]
-        public DataCollection  $categories,
+        public iterable  $categories,
 
         /**
          * @var array|null

@@ -29,10 +29,4 @@ class Project extends Model
     {
         return $this->expenses()->sum('price');
     }
-
-    public function getCategoriesAttribute(): Collection
-    {
-        return $this->expenses->map( fn ($expense) => $expense->category)->unique('id');
-    }
-
 }

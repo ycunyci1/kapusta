@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Collection;
 
 /**
@@ -22,20 +23,15 @@ class Category extends Model
 
 
     /**
-     * @return BelongsToMany
+     * @return HasMany
      */
-    public function expenses(): BelongsToMany
+    public function expenses(): HasMany
     {
-        return $this->belongsToMany(Expense::class);
+        return $this->hasMany(Expense::class);
     }
 
     public function project(): BelongsTo
     {
         return $this->belongsTo(Project::class);
-    }
-
-    public function getExpensesAttribute(): Collection|array
-    {
-        return $this->expenses;
     }
 }

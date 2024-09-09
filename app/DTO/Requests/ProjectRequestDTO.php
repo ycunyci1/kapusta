@@ -38,14 +38,14 @@ class ProjectRequestDTO extends Data
     public string $name;
 
     /**
-     * @var array
+     * @var array|null
      * @OA\Property (
      *     format="array",
      *     @OA\Items(ref="#/components/schemas/ExpenceRequest")
      * )
      */
     #[DataCollectionOf(ExpenseRequestDTO::class)]
-    public DataCollection $expenses;
+    public ?iterable $expenses;
 
     /**
      * @throws \Exception
@@ -64,10 +64,12 @@ class ProjectRequestDTO extends Data
             throw new \Exception("Name can't be null");
         }
         $this->name = $name;
-        try {
-            $this->expenses = ExpenseRequestDTO::collect($expenses);
-        } catch (\Exception $e) {
-            throw new \Exception($e->getMessage());
+        if ($expenses) {
+            try {
+                $this->expenses = ExpenseRequestDTO::collect($expenses);
+            } catch (\Exception $e) {
+                throw new \Exception($e->getMessage());
+            }
         }
     }
 }

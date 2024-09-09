@@ -27,20 +27,20 @@ class ExpenseRequestDTO extends Data
      *
      * @OA\Property (
      *     format="string",
-     *     example="1000.00"
+     *     example="1999-01-01"
      * )
      */
     public string $date;
 
     /**
-     * @var string
+     * @var string|null
      *
      * @OA\Property (
      *     format="string",
      *     example="50"
      * )
      */
-    public string $comment;
+    public ?string $comment;
 
     /**
      * @var integer|null

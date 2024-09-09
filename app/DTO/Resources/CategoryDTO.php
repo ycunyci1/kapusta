@@ -15,6 +15,16 @@ use Spatie\LaravelData\Data;
 class CategoryDTO extends Data
 {
     /**
+     * @var int
+     *
+     * @OA\Property (
+     *     format="int",
+     *     example="1"
+     * )
+     */
+    public int    $id;
+
+    /**
      * @var string
      *
      * @OA\Property (
@@ -64,18 +74,19 @@ class CategoryDTO extends Data
      */
     public int $personOfBudget;
 
+    public ?iterable $expenses;
+
     public function __construct(
-        string $name,
-        array $expenses,
-        string $icon,
+        string     $name,
+        string     $icon,
+        Collection $expenses,
     )
     {
-        $project = $expenses->first()->project;
+        $project = Project::find($expenses->first()->project_id);
         $this->name = $name;
-        $this->totalExpenses = (float) $expenses->pluck('price')->sum;;
+        $this->totalExpenses = (float)$expenses->sum('price');
         $this->icon = $icon;
         $this->purchaseCount = $expenses->count();
-
-        $this->personOfBudget = (int) round(($expenses->sum('price') / $project->budget) * 100);
+        $this->personOfBudget = (int)round(($expenses->sum('price') / $project->budget) * 100);
     }
 }
