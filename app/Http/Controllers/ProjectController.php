@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\DTO\Requests\ProjectRequestDTO;
+use App\DTO\Requests\ProjectUpdateDTO;
 use App\DTO\Resources\CategoryDTO;
 use App\DTO\Resources\LimitDTO;
 use App\DTO\Resources\ProjectDetailExpensesDetailDTO;
@@ -137,12 +138,18 @@ class ProjectController extends Controller
             }
         }
 
-        //старые expenses
         if ($projectDTO->oldExpenses) {
             $project->expenses()->attach($projectDTO->oldExpenses);
         }
 
         $expenses = $project->expenses;
+        $projectCategories = Category::query()->whereHas('expenses', fn($expensesQuery) => $expensesQuery->whereIn('expenses.id', $expenses->pluck('id')
+            ->toArray()))->get()->load(['expenses' => fn($query) => $query->whereHas('projects', fn($projects) => $projects
+            ->where('projects.id', $project->id))]);
+        $projectCategories = $projectCategories->map(function ($projectCategory) use ($project) {
+            $projectCategory->project_id = $project->id;
+            return $projectCategory;
+        });
         $totalExpenses = array_sum($expenses->pluck('price')->toArray());
         return $this->responseJson(new ProjectDTO(
             id: $project->id,
@@ -150,15 +157,14 @@ class ProjectController extends Controller
             name: $project->name,
             expenses: new ProjectDetailExpensesDTO(
                 expenses: ProjectDetailExpensesDetailDTO::collect($expenses),
-                total: (float) array_sum($expenses->pluck('price')->toArray())
+                total: (float)array_sum($expenses->pluck('price')->toArray())
             ),
             limits: new LimitDTO(
                 spent: $totalExpenses,
                 limit: $project->budget
             ),
             categories: CategoryDTO::collect(
-                Category::query()->whereHas('expenses', fn($expense) => $expense->where('project_id', $project->id))->get()
-                    ->load(['expenses' => fn($query) => $query->where('project_id', $project->id)])
+                $projectCategories
             )
         ), 201);
     }
@@ -176,6 +182,16 @@ class ProjectController extends Controller
      *          @OA\Schema(
      *              type="integer",
      *              example=1
+     *          )
+     *     ),
+     *     @OA\Parameter(
+     *          name="period",
+     *          description="Период для затрат",
+     *          in="query",
+     *          required=false,
+     *          @OA\Schema(
+     *              type="string",
+     *              example="day|week|month|year"
      *          )
      *     ),
      *     @OA\Response(
@@ -200,6 +216,7 @@ class ProjectController extends Controller
      * )
      *
      * @param int $projectId
+     * @param Request $request
      * @return ProjectDTO
      */
 
@@ -223,10 +240,9 @@ class ProjectController extends Controller
             ->toArray()))->get()->load(['expenses' => fn($query) => $query->whereHas('projects', fn($projects) => $projects
             ->where('projects.id', $projectId))]);
         $projectCategories = $projectCategories->map(function ($projectCategory) use ($projectId) {
-            $projectCategory->projectId = $projectId;
+            $projectCategory->project_id = $projectId;
             return $projectCategory;
         });
-        dd($projectCategories-);
 
         $totalExpenses = array_sum($expenses->pluck('price')->toArray());
         return new ProjectDTO(
@@ -235,7 +251,7 @@ class ProjectController extends Controller
             name: $project->name,
             expenses: new ProjectDetailExpensesDTO(
                 expenses: ProjectDetailExpensesDetailDTO::collect($expensesForGraph),
-                total: (float) array_sum($expensesForGraph->pluck('price')->toArray())
+                total: (float)array_sum($expensesForGraph->pluck('price')->toArray())
             ),
             limits: new LimitDTO(
                 spent: $totalExpenses,
@@ -252,13 +268,13 @@ class ProjectController extends Controller
      */
     public function update(Request $request, int $projectId)
     {
-//        $project = Project::query()->find($projectId);
-//        try {
-//            $projectDTO = ProjectRequestDTO::from($request->all());
-//        } catch (Exception $e) {
-//            return $this->responseValidationError($e->getMessage());
-//        }
-//        Project::query()->where('id', $projectId)->update($projectDTO->toArray());
+        $project = Project::find($projectId);
+        try {
+            $projectDTO = ProjectUpdateDTO::from($request->all());
+        } catch (Exception $e) {
+            return $this->responseValidationError($e->getMessage());
+        }
+        $project->update($projectDTO->toArray());
 
         return $this->responseJson([], 200);
     }

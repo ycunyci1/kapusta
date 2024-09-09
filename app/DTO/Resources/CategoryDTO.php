@@ -85,8 +85,6 @@ class CategoryDTO extends Data
         int        $projectId
     )
     {
-        dd($projectId);
-
         $project = Project::find($projectId);
         $this->name = $name;
         $this->totalExpenses = (float)$expenses->sum('price');
