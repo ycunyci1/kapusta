@@ -20,6 +20,10 @@ use Illuminate\Http\JsonResponse;
  *     name="Projects",
  *     description="Проекты"
  * )
+ * @OA\Tag(
+ *     name="Temp",
+ *     description="Временные маршруты для быстрой работы"
+ * )
  * @OA\Server(
  *      url="http://31.128.46.70",
  *      description="Debug test server"
