@@ -23,9 +23,18 @@ use Illuminate\Http\JsonResponse;
  *      url="http://31.128.46.70",
  *      description="Debug test server"
  * )
+ * @OA\Server(
+ *      url="http://localhost",
+ *      description="Local backend server"
+ * )
  */
 abstract class Controller
 {
+    public function __construct()
+    {
+        auth()->loginUsingId(1);
+    }
+
     public function responseJson(mixed $data = [], ?int $code = 200): JsonResponse
     {
         return response()->json([
