@@ -66,16 +66,15 @@ class CategoryDTO extends Data
 
     public function __construct(
         string $name,
-        Collection $expenses,
+        array $expenses,
         string $icon,
-        int $purchaseCount,
-        Project $project,
     )
     {
+        $project = $expenses->first()->project;
         $this->name = $name;
-        $this->totalExpenses = $expenses->count();;
+        $this->totalExpenses = (float) $expenses->pluck('price')->sum;;
         $this->icon = $icon;
-        $this->purchaseCount = $purchaseCount;
+        $this->purchaseCount = $expenses->count();
 
         $this->personOfBudget = (int) round(($expenses->sum('price') / $project->budget) * 100);
     }

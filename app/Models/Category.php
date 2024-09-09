@@ -33,4 +33,9 @@ class Category extends Model
     {
         return $this->belongsTo(Project::class);
     }
+
+    public function getExpensesAttribute(): Collection|array
+    {
+        return $this->expenses;
+    }
 }

@@ -12,6 +12,7 @@ use Illuminate\Support\Collection;
  * @property float $budget
  * @property float $spent
  * @property string $name
+ * @property Category[]|Collection $categories
  */
 class Project extends Model
 {
@@ -27,6 +28,11 @@ class Project extends Model
     public function getSpentAttribute(): float
     {
         return $this->expenses()->sum('price');
+    }
+
+    public function getCategoriesAttribute(): Collection
+    {
+        return $this->expenses->map( fn ($expense) => $expense->category)->unique('id');
     }
 
 }

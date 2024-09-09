@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ProjectController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -12,4 +13,6 @@ Route::prefix('v1')->group(function () {
     Route::post('register', [AuthController::class, 'register']);
     Route::post('check-code', [AuthController::class, 'checkCode']);
     Route::post('login', [AuthController::class, 'login']);
+
+    Route::resource('projects', ProjectController::class);
 });

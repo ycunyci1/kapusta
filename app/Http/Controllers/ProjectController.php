@@ -9,6 +9,7 @@ use App\DTO\Resources\ProjectDTO;
 use App\DTO\Resources\ProjectListDTO;
 use App\Models\Expense;
 use App\Models\Project;
+use App\Models\User;
 use Illuminate\Http\Request;
 use phpDocumentor\Reflection\Exception;
 
@@ -19,7 +20,8 @@ class ProjectController extends Controller
      */
     public function index()
     {
-        $user = auth()->user();
+//        $user = auth()->user();
+        $user = User::query()->first();
         $projects = $user->projects;
         return ProjectListDTO::collect($projects);
     }
@@ -54,9 +56,9 @@ class ProjectController extends Controller
      */
     public function show(int $projectId)
     {
+
         $project = Project::query()->find($projectId);
         $expenses = $project->expenses;
-
         $totalExpenses = array_sum($expenses->pluck('price')->toArray());
         return new ProjectDTO(
             totalBalance: $project->budget - $totalExpenses,
@@ -67,7 +69,7 @@ class ProjectController extends Controller
                 limit: $project->budget
             ),
             categories: CategoryDTO::collect(
-                $project->categories
+                $project->categories->load("expenses")->toArray()
             )
         );
     }
