@@ -22,7 +22,7 @@ class AuthService
         return User::query()->create($data);
     }
 
-    public function checkCode(array $data): bool
+    public static function checkCode(array $data): bool
     {
         $userCode = User::query()->where('email', $data['email'])->first()
             ?->codes()->latest()->first()
