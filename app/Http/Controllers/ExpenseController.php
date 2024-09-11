@@ -147,9 +147,12 @@ class ExpenseController extends Controller
     {
         $requestData = $request->all();
         $requestData['projectId'] = $projectId;
-        $expenseDTO = ExpenseRequestDTO::from($requestData);
+        $expenseDTO = ExpenseRequestDTO::from($requestData)->toSnakeCaseArray();
 
-        Expense::query()->create($expenseDTO->toArray());
+        $projectId = $expenseDTO['project_id'];
+        unset($expenseDTO['project_id']);
+        $expense = Expense::query()->create($expenseDTO);
+        $expense->projects()->attach($projectId);
         return $this->responseJson();
     }
 

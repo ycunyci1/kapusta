@@ -13,13 +13,14 @@ class AuthService
     public static function register(array $data): User
     {
         $data['password'] = Hash::make($data['password']);
-        //        $code = self::codeGenerate();
-//        RegisterCode::query()->create([
-//            'code' => $code,
-//            'user_id' => $user->id
-//        ]);
-//        Mail::to($user->email)->send(new SendCode($code));
-        return User::query()->create($data);
+        $user = User::query()->create($data);
+        $code = self::codeGenerate();
+        RegisterCode::query()->create([
+            'code' => $code,
+            'user_id' => $user->id
+        ]);
+        Mail::to($user->email)->send(new SendCode($code));
+        return $user;
     }
 
     public static function checkCode(array $data): bool

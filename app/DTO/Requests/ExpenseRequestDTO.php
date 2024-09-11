@@ -2,6 +2,7 @@
 
 namespace App\DTO\Requests;
 
+use Illuminate\Support\Str;
 use Spatie\LaravelData\Data;
 
 /**
@@ -57,7 +58,7 @@ class ExpenseRequestDTO extends Data
      *
      * @OA\Property (
      *     format="integer",
-     *     example="50"
+     *     example="1"
      * )
      */
     public int $categoryId;
@@ -67,7 +68,7 @@ class ExpenseRequestDTO extends Data
      *
      * @OA\Property (
      *     format="integer",
-     *     example="50"
+     *     example="1"
      * )
      */
     public int $accountId;
@@ -105,5 +106,12 @@ class ExpenseRequestDTO extends Data
         $this->projectId = $projectId;
 
         $this->comment = $comment;
+    }
+
+    public function toSnakeCaseArray(): array
+    {
+        return collect($this->toArray())
+            ->mapWithKeys(fn ($value, $key) => [Str::snake($key) => $value])
+            ->toArray();
     }
 }
