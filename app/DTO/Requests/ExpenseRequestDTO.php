@@ -51,7 +51,7 @@ class ExpenseRequestDTO extends Data
      *     example="50"
      * )
      */
-    public ?int $projectId;
+    public ?int $project_id;
 
     /**
      * @var integer
@@ -61,7 +61,7 @@ class ExpenseRequestDTO extends Data
      *     example="1"
      * )
      */
-    public int $categoryId;
+    public int $category_id;
 
     /**
      * @var integer
@@ -71,7 +71,7 @@ class ExpenseRequestDTO extends Data
      *     example="1"
      * )
      */
-    public int $accountId;
+    public int $account_id;
 
 
     /**
@@ -81,9 +81,9 @@ class ExpenseRequestDTO extends Data
         ?float  $price = null,
         ?string $date = null,
         ?string $comment = null,
-        ?int    $projectId = null,
-        ?int    $categoryId = null,
-        ?int    $accountId = null,
+        ?int    $project_id = null,
+        ?int    $category_id = null,
+        ?int    $account_id = null,
     )
     {
         if (!$price) {
@@ -94,16 +94,16 @@ class ExpenseRequestDTO extends Data
             throw new \Exception("Date is required");
         }
         $this->date = $date;
-        if (!$categoryId) {
+        if (!$category_id) {
             throw new \Exception("Category is required");
         }
-        $this->categoryId = $categoryId;
-        if (!$accountId) {
+        $this->category_id = $category_id;
+        if (!$account_id) {
             throw new \Exception("Account is required");
         }
-        $this->accountId = $accountId;
+        $this->account_id = $account_id;
 
-        $this->projectId = $projectId;
+        $this->project_id = $project_id;
 
         $this->comment = $comment;
     }

@@ -13,75 +13,6 @@ use Illuminate\Http\Request;
 class ExpenseController extends Controller
 {
     /**
-     * @OA\Get(
-     *     path="/api/v1/projects/{projectId}/expenses",
-     *     summary="Получить затраты по проекту",
-     *     tags={"Projects"},
-     *
-     *     @OA\Parameter(
-     *          name="projectId",
-     *          description="Id проекта",
-     *          in="path",
-     *          required=true,
-     *          example="126",
-     *          @OA\Schema(
-     *              type="string",
-     *          ),
-     *     ),
-     *     @OA\Parameter(
-     *          name="categoryId",
-     *          description="Id категории для фильтрации",
-     *          in="query",
-     *          required=false,
-     *          example="1",
-     *          @OA\Schema(
-     *              type="integer",
-     *          ),
-     *     ),
-     *     @OA\Parameter(
-     *          name="month",
-     *          description="Месяц за который надо прислать затраты(в разработке)",
-     *          in="query",
-     *          required=false,
-     *          example="1",
-     *          @OA\Schema(
-     *              type="integer",
-     *          ),
-     *     ),
-     *     @OA\Response(
-     *          response=200,
-     *          description="Список затрат по проекту",
-     *          @OA\JsonContent(
-     *              type="array",
-     *              @OA\Items(ref="#/components/schemas/ExpenseList")
-     *          )
-     *     ),
-     *     @OA\Response(
-     *          response=400,
-     *          description="Неверный код",
-     *     ),
-     *     security={
-     *       {"auth_api": {}}
-     *     }
-     * )
-     *
-     * @param CheckCodeRequest $request
-     * @return JsonResponse
-     */
-    public function index(Request $request, int $projectId)
-    {
-        $project = Project::query()->find($projectId);
-        /** @var Project $project */
-        $expenses = $project->expenses();
-        if ($request->has('categoryId')) {
-            $expenses = $expenses->where('category_id', $request->categoryId);
-        }
-        if ($request->has('month')) {
-        }
-        return $this->responseJson(ExpenseListDTO::collect($expenses->orderByDesc('date')));
-    }
-
-    /**
      * @OA\Post(
      *     path="/api/v1/projects/{projectId}/expenses",
      *     summary="Добавить затрату в проект",
@@ -146,7 +77,7 @@ class ExpenseController extends Controller
     public function store(Request $request, int $projectId)
     {
         $requestData = $request->all();
-        $requestData['projectId'] = $projectId;
+        $requestData['project_id'] = $projectId;
         $expenseDTO = ExpenseRequestDTO::from($requestData)->toSnakeCaseArray();
 
         $projectId = $expenseDTO['project_id'];
@@ -159,15 +90,25 @@ class ExpenseController extends Controller
     /**
      * @OA\Delete(
      *     path="/api/v1/projects/{projectId}/expenses",
-     *     summary="Добавить затрату в проект",
+     *     summary="Удалить затрату из проекта",
      *     tags={"Projects"},
+     *
+     *     @OA\Parameter(
+     *          name="projectId",
+     *          description="Id проекта",
+     *          in="path",
+     *          required=true,
+     *          example="1",
+     *          @OA\Schema(
+     *              type="integer",
+     *          ),
      *
      *     @OA\Parameter(
      *          name="expenseId",
      *          description="Id затраты",
      *          in="path",
      *          required=true,
-     *          example="126",
+     *          example="1",
      *          @OA\Schema(
      *              type="integer",
      *          ),
@@ -213,9 +154,16 @@ class ExpenseController extends Controller
      * @param int $expenseId
      * @return JsonResponse
      */
-    public function destroy(int $expenseId)
+    public function destroy(int $projectId, int $expenseId)
     {
-        Expense::query()->where('id', $expenseId)->delete();
+        $project = Project::query()->find($projectId);
+        $expense = Expense::query()->find($expenseId);
+        /** @var Expense $expense */
+        /** @var Project $project */
+        $project->expenses()->detach($expenseId);
+        if (!$expense->projects()->count()) {
+            $expense->delete();
+        }
         return $this->responseJson();
     }
 }

@@ -24,6 +24,7 @@ Route::prefix('v1')->group(function () {
 
     Route::get('projects/{projectId}/expenses', [ExpenseController::class, 'index']);
     Route::post('projects/{projectId}/expenses', [ExpenseController::class, 'store']);
+    Route::delete('projects/{projectId}/expenses/{expenseId}', [ExpenseController::class, 'destroy']);
     Route::resource('projects', ProjectController::class);
 
 

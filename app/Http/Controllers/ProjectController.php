@@ -124,17 +124,15 @@ class ProjectController extends Controller
             return $this->responseValidationError($e->getMessage());
         }
         $project = Project::query()->create($projectData);
-
         //новые expenses
         if ($projectDTO->newExpenses) {
-            $expenses = array_map(function ($expense) use ($project) {
+            $newExpenses = array_map(function ($expense) use ($project) {
                 $expense['project_id'] = $project->id;
-                $expense['category_id'] = $expense['categoryId'];
-                $expense['account_id'] = $expense['accountId'];
                 return $expense;
             }, $projectDTO->newExpenses);
-            foreach ($expenses as $expense) {
-                Expense::query()->create($expense);
+            foreach ($newExpenses as $expense) {
+                $expense = Expense::query()->create($expense);
+                $expense->projects()->attach($project->id);
             }
         }
 

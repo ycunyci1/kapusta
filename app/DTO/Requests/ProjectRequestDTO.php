@@ -4,6 +4,7 @@ namespace App\DTO\Requests;
 
 use App\DTO\Resources\CategoryDTO;
 use App\DTO\Resources\LimitDTO;
+use App\Models\Expense;
 use Spatie\LaravelData\Attributes\DataCollectionOf;
 use Spatie\LaravelData\Data;
 use Spatie\LaravelData\DataCollection;
@@ -38,15 +39,15 @@ class ProjectRequestDTO extends Data
     public string $name;
 
     /**
-     * @var DataCollection|int[]|null
+     * @var mixed
      *
      * @OA\Property (
      *    type="array",
      *      @OA\Items(type="integer"),
-     *     example="{1,2,3}"
+     *     example=[1,2,3]
      * )
      */
-    public ?DataCollection $oldExpenses;
+    public mixed $oldExpenses;
 
     /**
      * @var array|null
@@ -78,12 +79,10 @@ class ProjectRequestDTO extends Data
         $this->name = $name;
 
         if ($oldExpenses) {
-            try {
-                $this->$newExpenses = ExpenseRequestDTO::collect($oldExpenses);
-            } catch (\Exception $e) {
-                throw new \Exception($e->getMessage());
-            }
+            $oldExpenses = array_map(fn($oldExpense) => Expense::find($oldExpense)?->toArray(),$oldExpenses);
+            $oldExpenses = array_filter($oldExpenses, fn($oldExpense) => $oldExpense !== null);
+            $this->oldExpenses = ExpenseRequestDTO::collect($oldExpenses);
         }
-        $this->newExpenses = $newExpenses;
+        $this->newExpenses = ExpenseRequestDTO::collect($newExpenses);
     }
 }
