@@ -11,6 +11,7 @@ use Illuminate\Support\Collection;
 
 /**
  * @property string $name
+ * @property string $color
  * @property null|string $icon
  * @property Project $project
  * @property Expense[]|Collection $expenses

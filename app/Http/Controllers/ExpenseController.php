@@ -89,7 +89,7 @@ class ExpenseController extends Controller
 
     /**
      * @OA\Delete(
-     *     path="/api/v1/projects/{projectId}/expenses",
+     *     path="/api/v1/projects/{projectId}/expenses/{expenseId}",
      *     summary="Удалить затрату из проекта",
      *     tags={"Projects"},
      *
@@ -101,8 +101,8 @@ class ExpenseController extends Controller
      *          example="1",
      *          @OA\Schema(
      *              type="integer",
-     *          ),
-     *
+     *          )
+     *     ),
      *     @OA\Parameter(
      *          name="expenseId",
      *          description="Id затраты",
@@ -111,7 +111,7 @@ class ExpenseController extends Controller
      *          example="1",
      *          @OA\Schema(
      *              type="integer",
-     *          ),
+     *          )
      *     ),
      *     @OA\Response(
      *          response=200,
@@ -151,6 +151,7 @@ class ExpenseController extends Controller
      *     }
      * )
      *
+     * @param int $projectId
      * @param int $expenseId
      * @return JsonResponse
      */
@@ -158,6 +159,12 @@ class ExpenseController extends Controller
     {
         $project = Project::query()->find($projectId);
         $expense = Expense::query()->find($expenseId);
+        if (!$project) {
+            return $this->errorResponse('Project not found');
+        }
+        if (!$expense) {
+            return $this->errorResponse('Expense not found');
+        }
         /** @var Expense $expense */
         /** @var Project $project */
         $project->expenses()->detach($expenseId);

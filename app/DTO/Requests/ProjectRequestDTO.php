@@ -44,7 +44,7 @@ class ProjectRequestDTO extends Data
      * @OA\Property (
      *    type="array",
      *      @OA\Items(type="integer"),
-     *     example=[1,2,3]
+     *     example={1,2,3}
      * )
      */
     public mixed $oldExpenses;

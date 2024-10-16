@@ -12,6 +12,7 @@ use Laravel\Passport\HasApiTokens;
 
 /**
  * @property Project[]|Collection $projects
+ * @property int|null $budget
  */
 class User extends Authenticatable
 {

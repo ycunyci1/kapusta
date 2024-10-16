@@ -16,6 +16,11 @@ use Illuminate\Http\JsonResponse;
  *     name="Auth",
  *     description="Авторизация и регистрация"
  *     )
+ *
+ * @OA\Tag(
+ *     name="Home",
+ *     description="Главная страница"
+ *     )
  * @OA\Tag(
  *     name="Projects",
  *     description="Проекты"

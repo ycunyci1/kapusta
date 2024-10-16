@@ -18,7 +18,19 @@ class CategoryFactory extends Factory
     {
         return [
             'name' => fake()->word,
-            'icon' => fake()->imageUrl,
+            'icon' => $this->getRandomIcon(),
+            'color' => fake()->hexColor,
         ];
+    }
+
+    private function getRandomIcon()
+    {
+        $imagesPath = public_path('icons');
+        $images = glob($imagesPath . '/*.{jpg,jpeg,png,gif}', GLOB_BRACE);
+        if (count($images) === 0) {
+            return null;
+        }
+        $randomImage = $images[array_rand($images)];
+        return str_replace(public_path(), '', $randomImage);
     }
 }

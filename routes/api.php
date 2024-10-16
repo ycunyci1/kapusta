@@ -5,6 +5,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ExpenseController;
 use App\Http\Controllers\HistoryController;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\UserSwitchController;
 use Illuminate\Http\Request;
@@ -19,6 +20,8 @@ Route::prefix('v1')->group(function () {
     Route::post('check-code', [AuthController::class, 'checkCode']);
     Route::post('login', [AuthController::class, 'login']);
 //    Route::middleware('auth:api')->group(function () {
+
+    Route::get('/', [HomeController::class, 'index']);
 
     Route::get('projects/history', HistoryController::class);
 

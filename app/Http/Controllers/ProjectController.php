@@ -8,6 +8,7 @@ use App\DTO\Resources\CategoryDTO;
 use App\DTO\Resources\LimitDTO;
 use App\DTO\Resources\ProjectDetailExpensesDetailDTO;
 use App\DTO\Resources\ProjectDetailExpensesDTO;
+use App\DTO\Resources\HomePageDTO;
 use App\DTO\Resources\ProjectDTO;
 use App\DTO\Resources\ProjectListDTO;
 use App\Enums\PeriodEnum;
@@ -168,9 +169,9 @@ class ProjectController extends Controller
     }
 
     /**
-     * @OA\Get(
+     * @OA\Put(
      *     path="/api/v1/projects/{projectId}",
-     *     summary="Получить информацию о проекте",
+     *     summary="Обновить проект",
      *     tags={"Projects"},
      *     @OA\Parameter(
      *          name="projectId",
@@ -178,24 +179,59 @@ class ProjectController extends Controller
      *          in="path",
      *          required=true,
      *          @OA\Schema(
-     *              type="integer",
-     *              example=1
+     *              type="string",
+     *              example="1"
      *          )
      *     ),
      *     @OA\Parameter(
-     *          name="period",
-     *          description="Период для затрат",
+     *          name="name",
+     *          description="Название проекта",
      *          in="query",
      *          required=false,
      *          @OA\Schema(
      *              type="string",
-     *              example="day|week|month|year"
+     *              example="New project name"
+     *          )
+     *     ),
+     *     @OA\Parameter(
+     *          name="budget",
+     *          description="Бюджет проекта",
+     *          in="query",
+     *          required=false,
+     *          @OA\Schema(
+     *              type="string",
+     *              example="New project name"
      *          )
      *     ),
      *     @OA\Response(
      *          response=200,
-     *          description="Информация о проекте",
-     *          @OA\JsonContent(ref="#/components/schemas/ProjectDetail")
+     *          description="Успешно обновлено",
+     *          @OA\JsonContent(
+     *              type="array",
+     *              @OA\Items(type="string")
+     *          )
+     *     ),
+     *     @OA\Response(
+     *          response=401,
+     *          description="Пользователь не авторизован",
+     *          @OA\JsonContent(
+     *              @OA\Property(
+     *                  property="error",
+     *                  type="string",
+     *                  example="Unauthorized"
+     *              )
+     *          )
+     *     ),
+     *     @OA\Response(
+     *          response=400,
+     *          description="Неверный запрос",
+     *          @OA\JsonContent(
+     *              @OA\Property(
+     *                  property="error",
+     *                  type="string",
+     *                  example="Invalid request"
+     *              )
+     *          )
      *     ),
      *     @OA\Response(
      *          response=404,
@@ -204,7 +240,7 @@ class ProjectController extends Controller
      *              @OA\Property(
      *                  property="error",
      *                  type="string",
-     *                  example="Project not found"
+     *                  example="Not found"
      *              )
      *          )
      *     ),
@@ -213,60 +249,16 @@ class ProjectController extends Controller
      *     }
      * )
      *
-     * @param int $projectId
      * @param Request $request
-     * @return ProjectDTO
+     * @return JsonResponse
      */
-
-    public function show(int $projectId, Request $request)
-    {
-
-        $project = Project::query()->find($projectId);
-        $expenses = $project->expenses;
-        $period = $request->get('period');
-        $expensesForGraph = collect();
-        if ($period) {
-            $expensesForGraph = match ($period) {
-                PeriodEnum::DAY->value => $expenses->where('date', now()->format('Y-m-d')),
-                PeriodEnum::WEEK->value => $expenses->whereBetween('date', [now()->startOfWeek(), now()->endOfWeek()]),
-                PeriodEnum::MONTH->value => $expenses->whereBetween('date', [now()->startOfMonth(), now()->endOfMonth()]),
-                PeriodEnum::YEAR->value => $expenses->whereBetween('date', [now()->startOfYear(), now()->endOfYear()]),
-            };
-        }
-
-        $projectCategories = Category::query()->whereHas('expenses', fn($expensesQuery) => $expensesQuery->whereIn('expenses.id', $expenses->pluck('id')
-            ->toArray()))->get()->load(['expenses' => fn($query) => $query->whereHas('projects', fn($projects) => $projects
-            ->where('projects.id', $projectId))]);
-        $projectCategories = $projectCategories->map(function ($projectCategory) use ($projectId) {
-            $projectCategory->project_id = $projectId;
-            return $projectCategory;
-        });
-
-        $totalExpenses = array_sum($expenses->pluck('price')->toArray());
-        return new ProjectDTO(
-            id: $projectId,
-            totalBalance: $project->budget - $totalExpenses,
-            name: $project->name,
-            expenses: new ProjectDetailExpensesDTO(
-                expenses: ProjectDetailExpensesDetailDTO::collect($expensesForGraph),
-                total: (float)array_sum($expensesForGraph->pluck('price')->toArray())
-            ),
-            limits: new LimitDTO(
-                spent: $totalExpenses,
-                limit: $project->budget
-            ),
-            categories: CategoryDTO::collect(
-                $projectCategories
-            )
-        );
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
+    /**TODO: добавить сваггер и валидацию */
     public function update(Request $request, int $projectId)
     {
         $project = Project::find($projectId);
+        if (!$project) {
+            return $this->errorResponse('Project not found', 404);
+        }
         try {
             $projectDTO = ProjectUpdateDTO::from($request->all());
         } catch (Exception $e) {
@@ -274,7 +266,7 @@ class ProjectController extends Controller
         }
         $project->update($projectDTO->toArray());
 
-        return $this->responseJson([], 200);
+        return $this->responseJson();
     }
 
     /**
