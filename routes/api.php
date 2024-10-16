@@ -21,7 +21,7 @@ Route::prefix('v1')->group(function () {
     Route::post('login', [AuthController::class, 'login']);
 //    Route::middleware('auth:api')->group(function () {
 
-    Route::get('/', [HomeController::class, 'index']);
+    Route::get('/home', [HomeController::class, 'index']);
 
     Route::get('projects/history', HistoryController::class);
 

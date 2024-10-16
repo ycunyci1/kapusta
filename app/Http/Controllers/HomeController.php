@@ -17,7 +17,7 @@ class HomeController extends Controller
 {
     /**
      * @OA\Get(
-     *     path="/api/v1/",
+     *     path="/api/v1/home",
      *     summary="Получить информацию для главной страницы",
      *     tags={"Home"},
      *     @OA\Parameter(
